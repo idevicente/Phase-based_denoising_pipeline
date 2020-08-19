@@ -66,6 +66,8 @@ echo -e "\e[34m +++ ============================================================
 echo -e "\e[34m +++ ---------------> STARTING 3DDECONVOLVE IN MAGNITUDE WITHOUT PHASE REGRESSION <-----------------\e[39m"
 echo -e "\e[34m +++ =================================================================================\e[39m"
 
+Concat_files() {
+
 # First create stim times for each run (i.e. magnitude type: RAW, ODR, LSQ)
 # Note that ODR is considered as the 2nd run, and LSQ as the 3rd run. 
 # Thus, ODR stimulus times must start at time point 440 (440*0.85s = 374s) and finish at 880 (880*0.85s=748s). Likewise, LSQ must start at 880 (748s) 
@@ -112,6 +114,11 @@ cat ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_
 cat ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D > ${SUBJ}_Motion_demean_concatenated.1D
 cat ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D > ${SUBJ}_Motion_deriv_concatenated.1D
 
+}
+
+Concat_files
+
+GLM_MEMA() {
 
 TR_COUNTS=$(3dinfo -nt ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
 TR=$(3dinfo -TR ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
@@ -166,6 +173,8 @@ STIM_TIMES=${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_ta
 	-input "${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz ${SUBJ}.odr_substracted_scaled_mean.nii.gz ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz" \
 	-fout -tout -Rbuck ${SUBJ}.GLM_4MEMA_REML.stats_scaled_mean.nii.gz -Rvar ${SUBJ}.GLM_4MEMA_REMLvar.stats_scaled_mean.nii.gz \
 	-Rerrts ${SUBJ}.GLM_4MEMA_REML.errts.nii.gz -Rfitts ${SUBJ}.GLM_4MEMA_REML.fitts.nii.gz -verb
+
+}
 
 echo -e "\e[34m ######################################################################################################## \e[39m"
 
