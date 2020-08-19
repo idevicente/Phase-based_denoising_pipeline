@@ -1,6 +1,5 @@
 import nibabel as nb
 import numpy as np
-import os
 import argparse
 
 # Constructing the argument parser
@@ -25,19 +24,13 @@ deltaphase = np.zeros_like(data, dtype=np.float)
 for x in range(data.shape[0]):
     for y in range(data.shape[1]):
         for z in range(data.shape[2]):
-            # create delta phase time series
             deltaphase[x, y, z, :] = data[x, y, z, :] - data[x, y, z, 0]
-            # unwrap phase
+            # Unwrap phase
             phaseuw[x, y, z, :] = np.unwrap(deltaphase[x, y, z, :])
-     
          
-out_name1 = str(args['outdir']) + str(args['subj']) + '.phase.pb07_time_unwrapped.nii.gz'
+out_name = str(args['outdir']) + str(args['subj']) + '.phase.pb07_time_unwrapped.nii.gz'
 
 new_img = nb.Nifti1Image(phaseuw, img.affine, img.header)
-nb.save(new_img, out_name1)
-
-
-
-
+nb.save(new_img, out_name)
 
 
