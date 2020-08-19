@@ -2,84 +2,46 @@
 #$ -cwd
 #$ -m be
 #$ -M idevicente@bcbl.eu
-#$ -q long.q 
 
-if [[ -z "${SUBJ}" ]]; then
-  if [[ ! -z "$1" ]]; then
-     SUBJ=$1
-  else
-     echo -e "\e[31m++ ERROR: You need to input SUBJECT (SUBJ) as ENVIRONMENT VARIABLE or $1. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
-if [[ -z "${RUN}" ]]; then
-  if [[ ! -z "$2" ]]; then
-     RUN=$2
-  else
-     echo -e "\e[31m++ ERROR: You need to input RUN as ENVIRONMENT VARIABLE or $2. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
+# SUBJECT LIST
+list=(	'sub-01HBP6516S2'	'sub-02HBP2799S2'	'sub-03HBP3172S2'	'sub-04HBP2138S2'	'sub-08HBP3439S2'	'sub-12HBP6554S2'
+'sub-20HBP4798'	'sub-35HBP2777S2'	'sub-36HBP5395S2'	'sub-40HBP4920S2'	'sub-43HBP4356S2'	'sub-46HBP3953S2'
+'sub-48HBP4673S1'	'sub-60HBP4544S2'	'sub-62HBP3789S2'	'sub-66HBP6650S1'	'sub-75HBP7196S2'	'sub-79HBP7775'
+'sub-85HBP7184S2'	'sub-100HBP8367'	'sub-116HBP7891S2'	'sub-126HBP8592'	'sub-132HBP1720'  )
 
-if [[ -z "${PRJDIR}" ]]; then
-  if [[ ! -z "$3" ]]; then
-     PRJDIR=$3
-  else
-     echo -e "\e[31m++ ERROR: You need to input PROJECT DIRECTORY (PRJDIR) as ENVIRONMENT VARIABLE or $3. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
+# RUN LIST
+list2=(  '01' '02' '02'	'01' '01'	'01' 
+'01' '02'	'01' '01'	'01' '02'
+'01' '01'	'02' '02' '02' '02'
+'01' '01'	'01' '02'	'01'  )
 
-if [[ -z "${TASK}" ]]; then
-  if [[ ! -z "$4" ]]; then
-     TASK=$4
-  else
-     echo -e "\e[31m++ ERROR: You need to input TASK as ENVIRONMENT VARIABLE or $4. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
-if [[ -z "${ORDER}" ]]; then
-  if [[ ! -z "$5" ]]; then
-     ORDER=$5
-  else
-     echo -e "\e[31m++ ERROR: You need to input ORDER as ENVIRONMENT VARIABLE or $5. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
-if [[ -z "${CENSOR_TYPE_2USE}" ]]; then
-  if [[ ! -z "$6" ]]; then
-     CENSOR_TYPE_2USE=$6
-  else
-     echo -e "\e[31m++ ERROR: You need to input CENSOR_TYPE_2USE as ENVIRONMENT VARIABLE or $6. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
-if [[ -z "${CENSOR_MOTION_TH_2USE}" ]]; then
-  if [[ ! -z "$7" ]]; then
-     CENSOR_MOTION_TH_2USE=$7
-  else
-     echo -e "\e[31m++ ERROR: You need to input CENSOR_MOTION_TH_2USE as ENVIRONMENT VARIABLE or $7. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
+# STIMULUS ORDER LIST
+list3=(  'A' 'A' 'B' 'B' 'B' 'B' 
+'B'	'B'	'B'	'B'	'A'	'A'
+'B'	'B'	'A'	'A'	'B'	'B'
+'A'	'B'	'B'	'A'	'B'  )
 
-ORIGDIR=~/public/HBP_MaiteCesar
+PRJDIR=~/public/HBP_phase
+TASK="petit"
+CENSOR_TYPE_2USE="enorm"
+CENSOR_MOTION_TH_2USE="0.3"
 
 module load afni/latest
 module load python/python3
 
-cd ${PRJDIR}/PREPROC/${SUBJ}/func
-
-
-#sh ~/public/HBP_phase/scripts/01_functional_magnitude.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}	# Magnitude preprocessing script
-#sh ~/public/HBP_phase/scripts/02_functional_phase.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}			# Phase preprocessing script
-#sh ~/public/HBP_phase/scripts/03_functional_phaseregression.sh ${SUBJ} ${PRJDIR}			# Phase regression (ODR, Lsqrs) script
-#sh ~/public/HBP_phase/scripts/04_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script
-#sh ~/public/HBP_phase/scripts/04b_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dMEMA
-#sh ~/public/HBP_phase/scripts/05_anatomical.sh ${PRJDIR} ${SUBJ} ${ORIGDIR}              # Anatomical preprocessing 
-sh ~/public/HBP_phase/scripts/06_warpingMNI.sh ${PRJDIR} ${SUBJ}                         # Warping to MNI space 
-
-
+for i in ${!list[*]}
+do
+	SUBJ=${list[$i]}
+	RUN=${list2[$i]}
+	ORDER=${list3[$i]}
+  
+  sh ~/public/HBP_phase/scripts/01_functional_magnitude.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}	          # Magnitude preprocessing script
+  sh ~/public/HBP_phase/scripts/02_functional_phase.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}			          # Phase preprocessing script
+  sh ~/public/HBP_phase/scripts/03_functional_phaseregression.sh ${SUBJ} ${PRJDIR}			              # Phase-based regression (ODR, OLS) script
+  sh ~/public/HBP_phase/scripts/04_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dttest++
+  sh ~/public/HBP_phase/scripts/04b_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dMEMA
+  sh ~/public/HBP_phase/scripts/05_anatomical.sh ${PRJDIR} ${SUBJ} ${ORIGDIR}                         # Anatomical preprocessing 
+  sh ~/public/HBP_phase/scripts/06_warpingMNI.sh ${PRJDIR} ${SUBJ}                                    # Warping to MNI space 
 
 
 
