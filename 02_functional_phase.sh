@@ -24,7 +24,6 @@ if [[ -z "${RUN}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${PRJDIR}" ]]; then
   if [[ ! -z "$3" ]]; then
      PRJDIR=$3
@@ -33,7 +32,6 @@ if [[ -z "${PRJDIR}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${TASK}" ]]; then
   if [[ ! -z "$4" ]]; then
      TASK=$4
@@ -43,14 +41,12 @@ if [[ -z "${TASK}" ]]; then
   fi
 fi
 
-
 set -e
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
 OUTDIR=$(pwd)
 TRIMSECONDS=10 # SECONDS TO ACHIEVE STEADY STATE MAGNETIZATION
-
 
 ph_steady_state() {
 	
@@ -99,7 +95,7 @@ ph_convert2radians() {
 	echo -e "\e[34m +++ =====================================================================\e[39m"
 	echo -e "\e[34m +++ ----------------------> Convert to radians  <----------------------\e[39m"
 	echo -e "\e[34m +++ =====================================================================\e[39m"
-	# We divide by 4096 because that is the maximum voxel value in the input dataset. 
+	# We divide by 4096 because that is the maximum absolute voxel value in the input dataset. Note however that this value must be adjusted for each type of scanner or sequence used.
 	# This then leaves a timeseries that ranges from +3.14159 to -3.14159
 	3dcalc -overwrite -a ${SUBJ}.phase.pb00_tcat.nii.gz -expr '(a*3.14159)/4096' -float -prefix ${SUBJ}.phase.pb01_radians.nii.gz
 
@@ -120,10 +116,9 @@ ph_splitcomplex() {
 	echo -e "\e[34m +++ =====================================================================\e[39m"
 	echo -e "\e[34m +++ -------> Splitting complex file into real and imaginary parts  <--------\e[39m"
 	echo -e "\e[34m +++ =====================================================================\e[39m"
-	# Extracts REAL and IMAGINARY components of the datasets
+	# Extracts REAL and IMAGINARY components from the datasets
 	#real part
 	3dcalc -overwrite -cx2r REAL -a ${SUBJ}.phase.pb02_complex.nii.gz -expr 'a' -float -prefix ${SUBJ}.phase.pb03_real.nii.gz
-
 	#imaginary part
 	3dcalc -overwrite -cx2r IMAG -a ${SUBJ}.phase.pb02_complex.nii.gz -expr 'a' -float -prefix ${SUBJ}.phase.pb03_imag.nii.gz
 
@@ -202,8 +197,6 @@ ph_apply_mask() {
 	-prefix ${SUBJ}.phase.pb09_detrended_masked.nii.gz -overwrite
 
 }
-
-
 
 echo -e "\e[34m ######################################################################################################## \e[39m"
 
