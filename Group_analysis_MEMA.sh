@@ -1,9 +1,7 @@
 #!/bin/bash
 #$ -cwd
-#$ -o out.txt
-#$ -e err.txt
 #$ -m be
-#$ -N anatomical
+#$ -N Group analysis
 #$ -S /bin/bash
 
 PRJDIR=~/public/HBP_phase
@@ -17,15 +15,14 @@ fi
 
 cd ${PRJDIR}/PREPROC/00_Group_analysis
 
-
 MEMA_RAW() {
 
 GLM_TYPE=GLM_4MEMA_REML
 CONT_TYPE=Sent_Raw_vs_Scrm_Raw
 
-3dMEMA -overwrite -prefix Raw.MEMA.Sent-List.nii.gz				\
+3dMEMA -overwrite -prefix Raw.MEMA.Sent-List.nii.gz								\
 	-missing_data 0												\
-	-set Sent-List									\
+	-set Sent-List												\
 		  01 "${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  02 "${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  03 "${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
@@ -58,9 +55,9 @@ MEMA_OLS() {
 GLM_TYPE=GLM_4MEMA_REML
 CONT_TYPE=Sent_LSQ_vs_Scrm_LSQ
 
-3dMEMA -overwrite -prefix LSQ.MEMA.Sent-List.nii.gz				\
+3dMEMA -overwrite -prefix LSQ.MEMA.Sent-List.nii.gz								\
 	-missing_data 0												\
-	-set Sent-List									\
+	-set Sent-List												\
 		  01 "${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  02 "${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  03 "${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
@@ -93,9 +90,9 @@ MEMA_ODR() {
 GLM_TYPE=GLM_4MEMA_REML
 CONT_TYPE=Sent_ODR_vs_Scrm_ODR
 
-3dMEMA -overwrite -prefix ODR.MEMA.Sent-List.nii.gz				\
+3dMEMA -overwrite -prefix ODR.MEMA.Sent-List.nii.gz								\
 	-missing_data 0												\
-	-set Sent-List									\
+	-set Sent-List												\
 		  01 "${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  02 "${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  03 "${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
@@ -128,9 +125,9 @@ MEMA_RAW_vs_ODR() {
 GLM_TYPE=GLM_4MEMA_REML
 CONT_TYPE=Sent_vs_Scrm_VS_Raw_vs_ODR
 
-3dMEMA -overwrite -prefix Raw_vs_ODR.MEMA.Sent-List.nii.gz				\
+3dMEMA -overwrite -prefix Raw_vs_ODR.MEMA.Sent-List.nii.gz							\
 	-missing_data 0												\
-	-set Sent-List									\
+	-set Sent-List												\
 		  01 "${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  02 "${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  03 "${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
@@ -163,9 +160,9 @@ MEMA_RAW_vs_OLS() {
 GLM_TYPE=GLM_4MEMA_REML
 CONT_TYPE=Sent_vs_Scrm_VS_Raw_vs_LSQ
 
-3dMEMA -overwrite -prefix Raw_vs_LSQ.MEMA.Sent-List.nii.gz				\
+3dMEMA -overwrite -prefix Raw_vs_LSQ.MEMA.Sent-List.nii.gz							\
 	-missing_data 0												\
-	-set Sent-List									\
+	-set Sent-List												\
 		  01 "${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-01HBP6516S2/func/sub-01HBP6516S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  02 "${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-02HBP2799S2/func/sub-02HBP2799S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
 		  03 "${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Coef]"	"${PRJDIR}/PREPROC/sub-03HBP3172S2/func/sub-03HBP3172S2.${GLM_TYPE}.stats_scaled_mean.blur.MNI.nii.gz[${CONT_TYPE}#0_Tstat]"		\
