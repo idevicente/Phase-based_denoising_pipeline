@@ -2,7 +2,6 @@
 #$ -cwd
 #$ -m be
 #$ -M idevicente@bcbl.eu
-#$ -q long.q
 
 # ***********************************************************************************************
 # This script takes 5 arguments: Subject ID, RUN, PRJDIR path, TASK name, REFERENCE for alignment
@@ -43,9 +42,7 @@ if [[ -z "${TASK}" ]]; then
   fi
 fi
 
-
 set -e
-
 
 if [[ ! -d ${PRJDIR}/PREPROC/${SUBJ}/func ]]; then
 	mkdir -p ${PRJDIR}/PREPROC/${SUBJ}/func
@@ -55,7 +52,6 @@ fi
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
-
 echo -e "\e[32m ++ INFO: Looking for SBREF data. Reference for realignment ...\e[39m"
 FSBREF=`find ${PRJDIR}/BIDS_selected_subjects/$SUBJ/func/* -name "*task-${TASK}*run-${RUN}*sbref*nii.gz"`
 nSbref=$(echo "$FSBREF" | tr " " "\n" | grep -c ".nii.gz")
@@ -64,24 +60,14 @@ if [[ $nSbref == "0" ]]; then
   exit
 fi
 
-
 OUTDIR=$(pwd)
 TRIMSECONDS=10 # SECONDS TO ACHIEVE STEADY STATE MAGNETIZATION
-
-FWHM=4.0 # FULL-WIDTH-HALF-MAXIMUM FOR SPATIAL SMOOTHING
-EDGE_BRAIN_VOXELS=3
-EDGE_BRAIN_PCORDER=12
-COMPCOR_WM_PCORDER=5 # NUMBER OF PCs USED FOR ANATOMICAL COMPCOR IN WHITE MATTER
-COMPCOR_VENT_PCORDER=5 # NUMBER OF PCs USED FOR ANATOMICAL COMPCOR IN LATERAL VENTRICLES
-
 
 echo -e "\e[34m +++ ============================================================================================\e[39m"
 echo -e "\e[34m +++ ----------> STARTING SCRIPT: FUNCTIONAL PREPROCESSING OF SUBJ-${SUBJ} RUN-${RUN}  <---------\e[39m"
 echo -e "\e[34m +++ ============================================================================================\e[39m"
 
-
 ################ FUNCTIONAL PREPROCESSING OF MAGNITUDE #####################
-
 
 mag_copy_sbref() {
 	
@@ -159,7 +145,6 @@ mag_outliers() {
 mag_create_mask() {
 
 	# ================== create mask based on reference volume ===============================
-
 
 	echo -e "\e[34m +++ ========================================================================\e[39m"
 	echo -e "\e[34m +++ ------------> COMPUTE MASK OF FUNCTIONAL DATASET <----------------------\e[39m"
@@ -279,82 +264,15 @@ mag_tsnr() {
 	echo -e "\e[34m +++ ------------>    CALCULATE tSNR    <-------------------------\e[39m"
 	echo -e "\e[34m +++ =============================================================\e[39m"
 
-
 	3dTstat -overwrite -tsnr -prefix ${SUBJ}_tSNR.nii.gz ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz
 
 }
 
-mag_PC_regressors() {
-
-	echo -e "\e[34m +++ =====================================================================\e[39m"
-	echo -e "\e[34m +++ ----------------> COMPUTING COMPCOR REGRESSORS <----------------\e[39m"
-	echo -e "\e[34m +++ =====================================================================\e[39m"
-	echo -e "\e[32m ++ INFO: In original subject space ...\e[39m"
-	echo -e "\e[32m ++ INFO: Projecting out other nuisance regressors (motion, trends) and censoring before computing PCs ...\e[39m"
-
-	3dTproject -overwrite -polort ${POLORTORDER} -ort ${SUBJ}_Motion_demean.1D -ort ${SUBJ}_Motion_deriv.1D \
-	    -censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -cenmode KILL -input ${SUBJ}.magnitude.pb01_volreg.nii.gz -prefix rm.det_pcin.nii.gz
-	echo -e "\e[32m ++ INFO: Computing PCs for Ventricles ...\e[39m"
-	3dpc -overwrite -mask FS_Vent_Deep.al_epi.FUNC.nii.gz -pcsave ${COMPCOR_VENT_PCORDER} \
-	    -prefix rm.ROIPC.FS_Vent rm.det_pcin.nii.gz
-	# zero pad censored TRs
-	1d_tool.py -overwrite -censor_fill_parent ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -infile rm.ROIPC.FS_Vent_vec.1D -write ROIPC.FS_Vent.1D
-
-	echo -e "\e[32m ++ INFO: Computing PCs for WM ...\e[39m"
-	3dcalc -overwrite -a FS_WM_Middle.al_epi.FUNC.nii.gz -b FS_WM_Deep.al_epi.FUNC.nii.gz -expr 'step(a+b)' -prefix rm.WM_Compcor.nii.gz
-	3dpc -overwrite -mask rm.WM_Compcor.nii.gz -pcsave ${COMPCOR_WM_PCORDER} \
-	    -prefix rm.ROIPC.FS_WM rm.det_pcin.nii.gz
-	# zero pad censored TRs
-	1d_tool.py -overwrite -censor_fill_parent ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -infile rm.ROIPC.FS_WM_vec.1D -write ROIPC.FS_WM.1D
-
-	rm rm.ROIPC.FS_Vent_vec.1D
-	rm rm.ROIPC.FS_WM_vec.1D
-	rm rm.WM_Compcor.nii.gz
-	rm rm.det_pcin.nii.gz
 
 
-	echo -e "\e[34m +++ ========================================================================\e[39m"
-	echo -e "\e[34m +++ ------------> COMPUTE MASK OF EDGE BRAIN VOXELS <-----------------------\e[39m"
-	echo -e "\e[34m +++ ========================================================================\e[39m"
-	echo -e "\e[32m ++ INFO: Dilate mask of functional dataset ${EDGE_BRAIN_VOXELS} voxels to find edge brain voxels  ...\e[39m"
-	3dmask_tool -overwrite -dilate_input ${EDGE_BRAIN_VOXELS} -inputs ${SUBJ}_mask_base.nii.gz -prefix rm.${SUBJ}_mask_edge_voxels.nii.gz
-
-	echo -e "\e[32m ++ INFO: Compute mask of edge brain voxels, excluding voxels within anatomical mask due to signal dropouts  ...\e[39m"
-	3dcalc -overwrite -a rm.${SUBJ}_mask_edge_voxels.nii.gz -b ${SUBJ}_mask_base.nii.gz -c ${SUBJ}_T1_mask.al_epi.FUNC.nii.gz \
-	    -expr '(a-b)*iszero(c)' -prefix ${SUBJ}_mask_edge_voxels.FUNC.nii.gz
-
-	echo -e "\e[32m ++ INFO: Refine mask of edge-brain voxels to exclude voxels considered as GM ...\e[39m"
-	3dcalc -overwrite -a ${SUBJ}_mask_edge_voxels.FUNC.nii.gz -b FS_GM.al_epi.FUNC.nii.gz \
-	      -expr 'a*(1-b)' -prefix ${SUBJ}_mask_edge_voxels.FUNC.nii.gz
-
-
-	echo -e "\e[34m +++ ==============================================================\e[39m"
-	echo -e "\e[34m +++ --> COMPUTING EDGE BRAIN REGRESSORS (PRINCIPAL COMPONENTS) <--\e[39m"
-	echo -e "\e[34m +++ ==============================================================\e[39m"
-	echo -e "\e[32m ++ INFO: In original subject space ...\e[39m"
-	echo -e "\e[32m ++ INFO: Projecting out other nuisance regressors (motion, trends) and censoring before computing PCs ...\e[39m"
-	3dTproject -overwrite -polort ${POLORTORDER} -ort ${SUBJ}_Motion_demean.1D -ort ${SUBJ}_Motion_deriv.1D \
-	    -censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -cenmode KILL -input ${SUBJ}.magnitude.pb01_volreg.nii.gz -prefix rm.det_pcin.nii.gz
-	    #*+ WARNING: 3dTproject input data :: 232 vectors are constant
-
-	echo -e "\e[32m ++ INFO: Computing PCs for Edge brain voxels ...\e[39m"
-	3dpc -overwrite -mask ${SUBJ}_mask_edge_voxels.FUNC.nii.gz -pcsave ${EDGE_BRAIN_PCORDER} \
-	    -prefix rm.ROIPC.Edge rm.det_pcin.nii.gz
-	# zero pad censored TRs
-	1d_tool.py -overwrite -censor_fill_parent ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -infile rm.ROIPC.Edge_vec.1D -write ROIPC.Edge.1D
-
-}
-
-
-
-echo -e "\e[34m +++ ==================================================== =====================\e[39m"
+echo -e "\e[34m +++ ====================================================================================================\e[39m"
 echo -e "\e[34m +++ -------------------> STARTING MAGNITUDE PREPROCESSING: SUBJ-${SUBJ}; RUN-${RUN} <-------------------\e[39m"
-echo -e "\e[34m +++ ==========================================================================\e[39m"
+echo -e "\e[34m +++ ====================================================================================================\e[39m"
 echo -e "\e[32m ++ INFO: execution started: `date` \e[39m"
 
 mag_copy_sbref
@@ -369,7 +287,6 @@ mag_dvars
 mag_detrend
 mag_apply_mask
 mag_tsnr
-#mag_PC_regressors
 
 echo -e "\e[32m ++ INFO: execution finished: `date` \e[39m"
 
