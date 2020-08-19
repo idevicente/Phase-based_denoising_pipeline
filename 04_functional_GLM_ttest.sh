@@ -2,7 +2,6 @@
 #$ -cwd
 #$ -m be
 #$ -M idevicente@bcbl.eu
-#$ -q long.q
 
 # ***************************************************************************************
 # This script takes 4 arguments: Subject ID, PRJDIR path, TASK name, ORDER of onset times
@@ -16,7 +15,6 @@ if [[ -z "${SUBJ}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${PRJDIR}" ]]; then
   if [[ ! -z "$2" ]]; then
      PRJDIR=$2
@@ -25,7 +23,6 @@ if [[ -z "${PRJDIR}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${TASK}" ]]; then
   if [[ ! -z "$3" ]]; then
      TASK=$3
@@ -59,37 +56,34 @@ if [[ -z "${CENSOR_MOTION_TH_2USE}" ]]; then
   fi
 fi
 
-
 set -e
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
 scaling() {
+
 # Scale inputs before computing the GLM
-
 echo -e "\e[32m ++ INFO: Scaling inputs before computing GLM's ...\e[39m"
-
 echo -e "\e[32m ++ INFO: Scaling Raw Magnitude ...\e[39m"
+
 # Compute mean from the dataset previous to the detrending step
 3dTstat -mean -prefix ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz ${SUBJ}.magnitude.pb01_volreg.nii.gz -overwrite
 # Include mean to the GLM input dataset
 3dcalc -a ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -expr 'a+b' -prefix ${SUBJ}.magnitude.pb03_volreg_detrended_masked_mean.nii.gz -overwrite
 # Normalize
 3dcalc -a ${SUBJ}.magnitude.pb03_volreg_detrended_masked_mean.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -m ${SUBJ}_mask_base.nii.gz -expr 'm*(a/b)*100' -prefix ${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz -overwrite
-
 echo -e "\e[32m ++ INFO: Scaling LSQRS-regressed Magnitude ...\e[39m"
 3dcalc -a ${SUBJ}.Lsqrs.magnitude_phdenoised.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -expr 'a+b' -prefix ${SUBJ}.Lsqrs.magnitude_phdenoised_mean.nii.gz -overwrite
 3dcalc -a ${SUBJ}.Lsqrs.magnitude_phdenoised_mean.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -m ${SUBJ}_mask_base.nii.gz -expr 'm*(a/b)*100' -prefix ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz -overwrite
-
 echo -e "\e[32m ++ INFO: Scaling ODR-regressed Magnitude ...\e[39m"
 3dcalc -a ${SUBJ}.odr_substracted.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -expr 'a+b' -prefix ${SUBJ}.odr_substracted_mean.nii.gz -overwrite
 3dcalc -a ${SUBJ}.odr_substracted_mean.nii.gz -b ${SUBJ}.magnitude.pb01_volreg_mean.nii.gz -m ${SUBJ}_mask_base.nii.gz -expr 'm*(a/b)*100' -prefix ${SUBJ}.odr_substracted_scaled_mean.nii.gz -overwrite
 
 }
 
-#scaling
+scaling
 
-GLM_Magnitude() {
+GLM_RAW() {
 
 echo -e "\e[34m ######################################################################################\e[39m"
 	
@@ -128,28 +122,25 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 	-x1D ${SUBJ}.GLM_mag.X.xmat.1D -xjpeg ${SUBJ}.GLM_mag.X.jpg -x1D_uncensored ${SUBJ}.GLM_mag.X.nocensor.xmat.1D				\
 	-fitts ${SUBJ}.GLM_mag.fitts.nii.gz -errts ${SUBJ}.GLM_mag.errts.nii.gz -bucket ${SUBJ}.GLM_mag.stats_scaled_mean.nii.gz
 
-
 3dREMLfit -overwrite -matrix ${SUBJ}.GLM_mag.X.xmat.1D -input ${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz \
     -fout -tout -Rbuck ${SUBJ}.GLM_mag_REML.stats_scaled_mean.nii.gz -Rvar ${SUBJ}.GLM_mag_REMLvar.stats_scaled_mean.nii.gz \
     -Rerrts ${SUBJ}.GLM_mag_REML.errts.nii.gz -Rfitts ${SUBJ}.GLM_mag_REML.fitts.nii.gz -verb
 }
 
-#GLM_Magnitude
+GLM_RAW
 
-
-GLM_Lsqrs() {
+GLM_OLS() {
 
 echo -e "\e[34m ######################################################################################\e[39m"
 	
-echo -e "\e[34m +++ =================================================================================\e[39m"
+echo -e "\e[34m +++ =============================================================================================\e[39m"
 echo -e "\e[34m +++ ---------------> STARTING 3DDECONVOLVE IN MAGNITUDE REGRESSED THROUGH LSQR <-----------------\e[39m"
-echo -e "\e[34m +++ =================================================================================\e[39m"
+echo -e "\e[34m +++ =============================================================================================\e[39m"
 
 TR_COUNTS=$(3dinfo -nt ${SUBJ}.Lsqrs.magnitude_phdenoised.nii.gz)
 TR=$(3dinfo -TR ${SUBJ}.Lsqrs.magnitude_phdenoised.nii.gz)
 POLORTORDER=$(echo "scale=3;(${TR_COUNTS}*${TR})/150" | bc | xargs printf "%.*f\n" 0)
 POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
-
 
 3dDeconvolve -overwrite -input ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz                        						\
 	-polort ${POLORTORDER} -num_stimts 17	                                              							\
@@ -182,9 +173,9 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 
 }
 
-#GLM_Lsqrs
+GLM_OLS
 
-GLM_Odr() {
+GLM_ODR() {
 
 echo -e "\e[34m ######################################################################################\e[39m"
 	
@@ -196,7 +187,6 @@ TR_COUNTS=$(3dinfo -nt ${SUBJ}.odr_substracted.nii.gz)
 TR=$(3dinfo -TR ${SUBJ}.odr_substracted.nii.gz)
 POLORTORDER=$(echo "scale=3;(${TR_COUNTS}*${TR})/150" | bc | xargs printf "%.*f\n" 0)
 POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
-
 
 3dDeconvolve -overwrite -input ${SUBJ}.odr_substracted_scaled_mean.nii.gz                        								\
 	-polort ${POLORTORDER} -num_stimts 17	                                              							\
@@ -229,9 +219,7 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 
 }
 
-#GLM_Odr
-
-
+GLM_ODR
 
 echo -e "\e[34m ######################################################################################################## \e[39m"
 
