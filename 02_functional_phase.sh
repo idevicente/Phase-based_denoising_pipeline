@@ -2,7 +2,6 @@
 #$ -cwd
 #$ -m be
 #$ -M idevicente@bcbl.eu
-#$ -q long.q
 
 # **********************************************************************
 # This script takes 4 arguments: Subject ID, RUN, PRJDIR path, TASK name
