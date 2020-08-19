@@ -14,7 +14,6 @@ ap.add_argument("--subj", required = True, help = "subject")
 
 args = vars(ap.parse_args())
 
-
 fname = str(args['outdir'] + args['in_file'])
 img = nb.load(fname)
 data = np.array(img.get_data()).astype(float)
