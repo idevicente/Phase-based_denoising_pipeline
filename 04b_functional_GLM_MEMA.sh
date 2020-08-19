@@ -2,7 +2,6 @@
 #$ -cwd
 #$ -m be
 #$ -M idevicente@bcbl.eu
-#$ -q long.q
 
 # ***************************************************************************************
 # This script takes 4 arguments: Subject ID, PRJDIR path, TASK name, ORDER of onset times
@@ -16,7 +15,6 @@ if [[ -z "${SUBJ}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${PRJDIR}" ]]; then
   if [[ ! -z "$2" ]]; then
      PRJDIR=$2
@@ -25,7 +23,6 @@ if [[ -z "${PRJDIR}" ]]; then
      exit
   fi
 fi
-
 if [[ -z "${TASK}" ]]; then
   if [[ ! -z "$3" ]]; then
      TASK=$3
@@ -59,13 +56,9 @@ if [[ -z "${CENSOR_MOTION_TH_2USE}" ]]; then
   fi
 fi
 
-
 set -e
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
-
-
-GLM_MEMA() {
 
 echo -e "\e[34m ######################################################################################\e[39m"
 	
@@ -73,12 +66,9 @@ echo -e "\e[34m +++ ============================================================
 echo -e "\e[34m +++ ---------------> STARTING 3DDECONVOLVE IN MAGNITUDE WITHOUT PHASE REGRESSION <-----------------\e[39m"
 echo -e "\e[34m +++ =================================================================================\e[39m"
 
-
-
-# First create stim times for each run (i.e. magnitude type: RAW, ODR, LSQ)"
+# First create stim times for each run (i.e. magnitude type: RAW, ODR, LSQ)
 # Note that ODR is considered as the 2nd run, and LSQ as the 3rd run. 
 # Thus, ODR stimulus times must start at time point 440 (440*0.85s = 374s) and finish at 880 (880*0.85s=748s). Likewise, LSQ must start at 880 (748s) 
-
 
 cd ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times
 
@@ -95,53 +85,40 @@ cd ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times
 1deval -overwrite -a onset_${SUBJ}_task-${TASK}_${ORDER}_Star.1D.txt -expr 'a+748' > onset_${SUBJ}_task-${TASK}_${ORDER}_Star_LSQ.1D.txt
 
 1dMarry -divorce onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt > rm.Scramble_divorce1.1D rm.Scramble_divorce2.1D
-
 1deval -overwrite -a rm.Scramble_divorce2.1D_A.1D -expr 'a' > rm.Scramble_divorce_A_Raw.1D.txt
 1deval -overwrite -a rm.Scramble_divorce2.1D_A.1D -expr 'a+374' > rm.Scramble_divorce_A_ODR.1D.txt
 1deval -overwrite -a rm.Scramble_divorce2.1D_A.1D -expr 'a+748' > rm.Scramble_divorce_A_LSQ.1D.txt
-
 1dMarry -sep ':' rm.Scramble_divorce_A_Raw.1D.txt rm.Scramble_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble_Raw.1D.txt
 1dMarry -sep ':' rm.Scramble_divorce_A_ODR.1D.txt rm.Scramble_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble_ODR.1D.txt
 1dMarry -sep ':' rm.Scramble_divorce_A_LSQ.1D.txt rm.Scramble_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble_LSQ.1D.txt
-
-#rm rm*
-#rm onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt_*
-
+rm rm*
+rm onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt_*
 
 1dMarry -divorce onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt > rm.Sentence_divorce1.1D rm.Sentence_divorce2.1D
-
 1deval -overwrite -a rm.Sentence_divorce2.1D_A.1D -expr 'a' > rm.Sentence_divorce_A_Raw.1D.txt
 1deval -overwrite -a rm.Sentence_divorce2.1D_A.1D -expr 'a+374' > rm.Sentence_divorce_A_ODR.1D.txt
 1deval -overwrite -a rm.Sentence_divorce2.1D_A.1D -expr 'a+748' > rm.Sentence_divorce_A_LSQ.1D.txt
-
 1dMarry -sep ':' rm.Sentence_divorce_A_Raw.1D.txt rm.Sentence_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence_Raw.1D.txt
 1dMarry -sep ':' rm.Sentence_divorce_A_ODR.1D.txt rm.Sentence_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence_ODR.1D.txt
 1dMarry -sep ':' rm.Sentence_divorce_A_LSQ.1D.txt rm.Sentence_divorce2.1D_B.1D > onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence_LSQ.1D.txt
-
-#rm rm*
-#rm onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt_*
-
+rm rm*
+rm onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt_*
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
 # CONCATENATE CENSOR; DEMEAN MOTION; DERIV MOTION FILES
 
 cat ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D > ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2_concatenated.1D
-
 cat ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D > ${SUBJ}_Motion_demean_concatenated.1D
-
 cat ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D > ${SUBJ}_Motion_deriv_concatenated.1D
 
-}
 
 TR_COUNTS=$(3dinfo -nt ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
 TR=$(3dinfo -TR ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
 POLORTORDER=$(echo "scale=3;(${TR_COUNTS}*${TR})/150" | bc | xargs printf "%.*f\n" 0)
 POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 
-
 STIM_TIMES=${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-petit_${ORDER}
-
 
 3dDeconvolve -overwrite -input ${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz ${SUBJ}.odr_substracted_scaled_mean.nii.gz ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz						\
 	-concat '1D: 0 440 880'									\
@@ -185,15 +162,10 @@ STIM_TIMES=${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_ta
 	-x1D ${SUBJ}.GLM_4MEMA.X.xmat.1D -xjpeg ${SUBJ}.GLM_4MEMA.X.jpg -x1D_uncensored ${SUBJ}.GLM_4MEMA.X.nocensor.xmat.1D				\
 	-fitts ${SUBJ}.GLM_4MEMA.fitts.nii.gz -errts ${SUBJ}.GLM_4MEMA.errts.nii.gz -bucket ${SUBJ}.GLM_4MEMA.stats_scaled_mean.nii.gz
 
-
 3dREMLfit -overwrite -matrix ${SUBJ}.GLM_4MEMA.X.xmat.1D \
 	-input "${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz ${SUBJ}.odr_substracted_scaled_mean.nii.gz ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz" \
 	-fout -tout -Rbuck ${SUBJ}.GLM_4MEMA_REML.stats_scaled_mean.nii.gz -Rvar ${SUBJ}.GLM_4MEMA_REMLvar.stats_scaled_mean.nii.gz \
 	-Rerrts ${SUBJ}.GLM_4MEMA_REML.errts.nii.gz -Rfitts ${SUBJ}.GLM_4MEMA_REML.fitts.nii.gz -verb
-
-
-
-
 
 echo -e "\e[34m ######################################################################################################## \e[39m"
 
