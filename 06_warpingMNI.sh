@@ -1,19 +1,14 @@
 #!/bin/bash
 #$ -cwd
-#$ -o out.txt
-#$ -e err.txt
 #$ -m be
-#$ -N anatomical
+#$ -N MNI
 #$ -S /bin/bash
-
 
 # ****************************************************************************
 # Compute anatomical preprocessing after freesurfer recon-all
 # Scripts 01_freesurfer must be run before
 # This function takes 4 arguments: PRJDIR path, Subject name, TEMPLATE, TSPACE
 # ****************************************************************************
-
-
 
 if [[ -z "${PRJDIR}" ]]; then
   if [[ ! -z "$1" ]]; then
@@ -46,10 +41,8 @@ FWHM=5.0 # FULL-WIDTH-HALF-MAXIMUM FOR SPATIAL SMOOTHING
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
-
 VOXELRESZ=$(3dinfo -adk ${SUBJ}.volreg_base.nii.gz) #MINE
 
-alreadydone() {
 echo "Working in $(pwd)"
 
 # CREATE SYMBOLIC LINK OF ANATOMICAL TEMPLATE IN CURRENT DIRECTORY
@@ -173,13 +166,11 @@ do
    #ln -s ${ANAT_PREPROC_DIR}/${DATA_ANAT}.ANAT.${TSPACE}.nii.gz ./
 done
 
-}
 
 echo -e "\e[34m +++ =================================================================\e[39m"
 echo -e "\e[34m +++ -->  WARPING and SPATIAL SMOOTHING OF GLM STATS TO ${TSPACE}  <--\e[39m"
 echo -e "\e[34m +++ =================================================================\e[39m"
-#for GLM_TYPE in GLM_mag_REML GLM_odr_REML GLM_lsqrs_REML
-for GLM_TYPE in GLM_4MEMA_REML
+for GLM_TYPE in GLM_mag_REML GLM_odr_REML GLM_lsqrs_REML
 do
     echo -e "\e[32m ++ INFO: Warping ${GLM_TYPE} to ${TSPACE} ...\e[39m"
     3dNwarpApply -overwrite -master ${SUBJ}_T1_ns.${TSPACE}.nii.gz -dxyz ${VOXELRESZ} \
@@ -196,6 +187,22 @@ do
 
 done
 
+# Repeat for 3dMEMA GLM results 
+for GLM_TYPE in GLM_4MEMA_REML
+do
+    echo -e "\e[32m ++ INFO: Warping ${GLM_TYPE} to ${TSPACE} ...\e[39m"
+    3dNwarpApply -overwrite -master ${SUBJ}_T1_ns.${TSPACE}.nii.gz -dxyz ${VOXELRESZ} \
+             -source ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.nii.gz                         \
+             -nwarp "anat.un.aff.qw_WARP.nii.gz mat.warp.aff12.1D"     \
+             -prefix ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.${TSPACE}.nii.gz
+
+    echo -e "\e[32m ++ INFO: Spatial smoothing ${FWHM} of ${GLM_TYPE} in ${TSPACE} space ...\e[39m"
+    3dBlurInMask -overwrite -float -preserve -FWHM ${FWHM} -mask ${SUBJ}_mask_base.FUNC.${TSPACE}.nii.gz \
+             -prefix rm.${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.${TSPACE}.nii.gz
+    3dcalc -overwrite -a rm.${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz -m ${SUBJ}_mask_base.FUNC.${TSPACE}.nii.gz \
+             -expr 'a*m' -prefix ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz
+
+done
 
 echo -e "\e[32m ++ INFO: Deleting temporary files ...\e[39m"
 rm  rm* 
@@ -203,9 +210,5 @@ rm  rm*
 echo -e "\e[34m +++ ===============================================================\e[39m"
 echo -e "\e[34m +++ ---------> END OF SCRIPT: WARPING ${TSPACE}  FINISHED  <-------\e[39m"
 echo -e "\e[34m +++ ===============================================================\e[39m"
-
-
-
-
 
 
