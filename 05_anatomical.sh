@@ -1,11 +1,8 @@
 #!/bin/bash
 #$ -cwd
-#$ -o out.txt
-#$ -e err.txt
 #$ -m be
 #$ -N anatomical
 #$ -S /bin/bash
-
 
 # ****************************************************************************
 # Compute anatomical preprocessing after freesurfer recon-all
@@ -27,14 +24,6 @@ if [[ -z "${SUBJ}" ]]; then
      exit
   fi
 fi
-if [[ -z "${ORIGDIR}" ]]; then
-  if [[ ! -z "$3" ]]; then
-     ORIGDIR=$3
-  else
-     echo -e "\e[31m++ ERROR: You need to input ORIGINAL folder with DIRECTORY with FREE as ENVIRONMENT VARIABLE or $1. Exiting!! ...\e[39m"
-     exit
-  fi
-fi
 
 if [[ ${HOSTAME} == *"ipsnode"* ]]; then
     echo "Loading modules"
@@ -46,7 +35,7 @@ set -e
 TSPACE=MNI
 TEMPLATE_BASENAME="MNI152_2009_template"
 SESSION="CRANEOFUNCIONAL1"
-#ORIGDIR=${HOME}/public/HBP_MaiteCesar/
+ORIGDIR=${HOME}/public/HBP_MaiteCesar
 SUMADIR=${ORIGDIR}/FREESURFER/ses-${SESSION}/${SUBJ}/SUMA
 
 echo -e "\e[34m +++ =======================================================================\e[39m"
@@ -62,7 +51,6 @@ else
     echo -e "\e[35m ++ WARNING: ${PRJDIR}/PREPROC/${SUBJ}/anat already exist. Will overwrite results!! ...\e[39m"
 fi
 cd ${PRJDIR}/PREPROC/${SUBJ}/anat
-
 
 # linking freesurfer & SUMA volumes to anat folder (i.e. original T1 space at anatomical resolution)
 if [[ -f ${SUBJ}_T1.nii.gz ]]; then
@@ -144,7 +132,6 @@ echo -e "\e[32m ++ INFO: Computing Masks of Superficial, Middle and Deep WM ...\
 3dcalc -overwrite -a rm.FS_WM.erode2.nii.gz -b rm.FS_WM.erode4.nii.gz -expr 'a-b' -prefix FS_WM_Middle.nii.gz
 3dcalc -overwrite -a rm.FS_WM.erode4.nii.gz -expr 'a' -prefix FS_WM_Deep.nii.gz
 
-
 # ANATOMICAL WARPING TO MNI
 # =========================
 echo -e "\e[34m +++ =======================================================================\e[39m"
@@ -162,7 +149,6 @@ auto_warp.py -overwrite -base ${PRJDIR}/TEMPLATES_ATLAS/${TEMPLATE_BASENAME}.nii
 mv -f awpy/anat.un.aff.Xat.1D ./
 mv -f awpy/anat.un.aff.qw_WARP.nii ./
 gzip anat.un.aff.qw_WARP.nii
-
 
 echo -e "\e[34m +++ =================================================================================\e[39m"
 echo -e "\e[34m +++ --> WARPING ANATOMICAL MASKS, WM, CSF AND FS PARCELLATIONS TO ${TSPACE} <--------\e[39m"
