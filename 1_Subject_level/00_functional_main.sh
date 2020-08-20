@@ -38,8 +38,8 @@ do
   sh ~/public/HBP_phase/scripts/01_functional_magnitude.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}	          	# Magnitude preprocessing script
   sh ~/public/HBP_phase/scripts/02_functional_phase.sh ${SUBJ} ${RUN} ${PRJDIR} ${TASK}			  	# Phase preprocessing script
   sh ~/public/HBP_phase/scripts/03_functional_phaseregression.sh ${SUBJ} ${PRJDIR}			  	# Phase-based regression (ODR, OLS) script
-  sh ~/public/HBP_phase/scripts/04_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dttest++
-  sh ~/public/HBP_phase/scripts/04b_functional_GLM.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dMEMA
+  sh ~/public/HBP_phase/scripts/04_GLM_ttest.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dttest++
+  sh ~/public/HBP_phase/scripts/04_GLM_MEMA.sh ${SUBJ} ${PRJDIR} ${TASK} ${ORDER} ${CENSOR_TYPE_2USE} ${CENSOR_MOTION_TH_2USE}		# Deconvolve script for 3dMEMA
   sh ~/public/HBP_phase/scripts/05_anatomical.sh ${PRJDIR} ${SUBJ}                         	  		# Anatomical preprocessing 
   sh ~/public/HBP_phase/scripts/06_warpingMNI.sh ${PRJDIR} ${SUBJ}                                    		# Warping to MNI space 
 
