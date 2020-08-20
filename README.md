@@ -2,7 +2,7 @@
 
 This pipeline is organized as following:
 
-* Both single-subject preprocessing and analysis are carried out by executing the script `<00_main.sh>` through the terminal, which sequentially runs the rest of the single-subject scripts. The purpose of these scripts are briefly discussed below.
+* Both single-subject preprocessing and analysis are carried out by executing the script `<00_main.sh>` through the terminal, which sequentially runs the rest of the single-subject scripts. The purpose of the rest scripts are briefly discussed below.
 
 * Group-level statistics are obtained independently through the terminal (i.e. `<sh Group_analysis_ttest.sh>` and `<sh Group_analysis_MEMA.sh>`).  
 
