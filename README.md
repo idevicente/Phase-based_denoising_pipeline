@@ -8,7 +8,7 @@ This pipeline is organized as following:
 
 For implementation, one would obviously need to change the environment variables for their own subject list, project directory, etc...
 
-***`<01_functional_magnitude.sh>`***: Functional preprocessing of magnitude images.
+***`<01_functional_magnitude.sh>`***: Functional preprocessing of magnitude images. \\
 ***`<02_functional_phase.sh>`***: Functional preprocessing of phase images. This script executes `<02b_temporal_unwrapping.py>` as well.
 ***`<03_functional_phaseregression.sh>`***: Phase-based regression with two different fitting algorithms, i.e. with a least-squares approach and a orthogonal distance regression method (the latter is performed by the script `<03b_ODR_fit.py>`).
 ***`<04_GLM_ttest.sh>`***: Computes the General linear model (GLM) separately for the tree types of preprocessed magnitudes (i.e. without any phase-based regression, OLS-denoised and ODR-denoised datasets).
