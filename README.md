@@ -21,6 +21,5 @@ ________________
 
 Below, we further illustrate a flow-chart of the pipeline showing the main steps that are performed within each script. <br/>
 <br/>
-<br/>
 
 <img src="Flow_chart_pipeline.png"> 
