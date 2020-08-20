@@ -7,3 +7,11 @@ This pipeline is organized as following:
 * Group-level statistics are obtained independently through the terminal (i.e. `<sh Group_analysis_ttest.sh>` and `<sh Group_analysis_MEMA.sh>`).  
 
 For implementation, one would obviously need to change the environment variables for their own subjects, project directory, etc...
+
+``` mermaid
+graph LR
+A[Hard edge] -->B(Round edge)
+B --> C{Decision}
+C -->|One| D[Result one]
+C -->|Two| E[Result two]
+```
