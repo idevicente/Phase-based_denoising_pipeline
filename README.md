@@ -8,10 +8,8 @@ This pipeline is organized as following:
 
 For implementation, one would obviously need to change the environment variables for their own subjects, project directory, etc...
 
-``` mermaid
-graph LR
-A[Hard edge] -->B(Round edge)
-B --> C{Decision}
-C -->|One| D[Result one]
-C -->|Two| E[Result two]
-```
+graph TD;
+    A-->B;
+    A-->C;
+    B-->D;
+    C-->D;
