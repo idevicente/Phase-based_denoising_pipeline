@@ -8,3 +8,4 @@ This pipeline is organized as following:
 
 For implementation, one would obviously need to change the environment variables for their own subjects, project directory, etc...
 
+<img src="Flow_chart_pipeline.png"> 
