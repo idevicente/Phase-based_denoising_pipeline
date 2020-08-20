@@ -67,7 +67,7 @@ ODR(){
 
 	cd ${PRJDIR}/scripts
 
-	python ODR_fit.py --phase ${SUBJ}.phase.pb09_detrended_masked.nii.gz \
+	python 03b_ODR_fit.py --phase ${SUBJ}.phase.pb09_detrended_masked.nii.gz \
 			--magnitude ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz \
 			--mask ${SUBJ}_mask_base.nii.gz \
 			--TR 0.85 \
