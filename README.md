@@ -19,6 +19,6 @@ ________________
 ***`<Group_analysis_MEMA.sh>`***: Group-analysis through a mixed-effects model, which accounts for both within- and across- subject variability. <br/>
 ________________ 
 
-Below, we illustrate a flow-chart of the pipeline showing the main steps that are performed within each script.
+Below, we further illustrate a flow-chart of the pipeline showing the main steps that are performed within each script. <br/>
 
 <img src="Flow_chart_pipeline.png"> 
