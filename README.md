@@ -1,4 +1,4 @@
-# Phase_based_pipeline
+# Phase-based denoising pipeline
 
 This pipeline is organized as following:
 
