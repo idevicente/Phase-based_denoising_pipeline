@@ -12,6 +12,7 @@ For implementation, one would obviously need to change the environment variables
 `<02_functional_phase.sh>`
 `<02b_temporal_unwrapping.py>`
 `<03_functional_phaseregression.sh>`
+`<03b_ODR_fit.py>`
 `<04_GLM_MEMA.sh>`
 `<04_GLM_ttest.sh>`
 `<05_anatomical.sh>`
