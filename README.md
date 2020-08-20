@@ -7,7 +7,7 @@ This pipeline is organized as following:
 * Group-level statistics are obtained independently through the terminal (i.e. `<sh Group_analysis_ttest.sh>` and `<sh Group_analysis_MEMA.sh>`).  
 
 For implementation, one would need to change the environment variables for their own subject list, project directory, etc... <br/>
----
+<div class="warning">
 ***`<01_functional_magnitude.sh>`***: Functional preprocessing of magnitude images. <br/>
 ***`<02_functional_phase.sh>`***: Functional preprocessing of phase images. Inside this script `<02b_temporal_unwrapping.py>` is also executed. <br/>
 ***`<03_functional_phaseregression.sh>`***: Phase-based regression with two different fitting algorithms, i.e. with a least-squares approach and a orthogonal distance regression method (the latter is performed by the script `<03b_ODR_fit.py>`). <br/>
@@ -17,7 +17,7 @@ For implementation, one would need to change the environment variables for their
 ***`<06_anatomical.sh>`***: Transforms the results from the GLM's to the MNI space. <br/>
 ***`<Group_analysis_ttest.sh>`***: Group-analysis through conventional one-sample t-tests. <br/>
 ***`<Group_analysis_MEMA.sh>`***: Group-analysis through a mixed-effects model, which accounts for both within- and across- subject variability. <br/>
----
+</div>
 
 Below, we further illustrate a flow-chart of the pipeline showing the main steps that are performed within each script. <br/>
 <br/>
