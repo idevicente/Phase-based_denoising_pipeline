@@ -6,7 +6,7 @@ This pipeline is organized as following:
 
 * Group-level statistics are obtained independently through the terminal (i.e. `<sh Group_analysis_ttest.sh>` and `<sh Group_analysis_MEMA.sh>`).  
 
-For implementation, one would obviously need to change the environment variables for their own subject list, project directory, etc... <br/>
+For implementation, one would need to change the environment variables for their own subject list, project directory, etc... <br/>
 ________________
 ***`<01_functional_magnitude.sh>`***: Functional preprocessing of magnitude images. <br/>
 ***`<02_functional_phase.sh>`***: Functional preprocessing of phase images. This script executes `<02b_temporal_unwrapping.py>` as well. <br/>
