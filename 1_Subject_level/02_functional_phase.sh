@@ -170,7 +170,7 @@ ph_temp_unwrapping() {
 
 	cd ${PRJDIR}/scripts
 
-	python temporal_unwrapping.py --in_file ${SUBJ}.phase.pb06_phase_motioncorrected.nii.gz --outdir ${PRJDIR}/PREPROC/${SUBJ}/func/ --subj ${SUBJ}  			      
+	python 02b_temporal_unwrapping.py --in_file ${SUBJ}.phase.pb06_phase_motioncorrected.nii.gz --outdir ${PRJDIR}/PREPROC/${SUBJ}/func/ --subj ${SUBJ}  			      
 	cd ${PRJDIR}/PREPROC/${SUBJ}/func/
 
 }
