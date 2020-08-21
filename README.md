@@ -22,4 +22,4 @@ _________________
 Below, we further illustrate a flow-chart of the pipeline showing the main steps that are performed within each script. <br/>
 <br/>
 
-<img src="Flow_chart_pipeline.png"> 
+<img src="Flow_Chart_Pipeline.png"> 
