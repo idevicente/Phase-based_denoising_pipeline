@@ -62,16 +62,15 @@ cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
 echo -e "\e[34m ###################################################################################################\e[39m"
 	
-echo -e "\e[34m +++ ===============================================================================================\e[39m"
-echo -e "\e[34m +++ --------------------> STARTING 3DDECONVOLVE FOR A MIXED-EFFECTS ANALYSIS <---------------------\e[39m"
-echo -e "\e[34m +++ ===============================================================================================\e[39m"
-
 Concat_files() {
+
+echo -e "\e[32m ++ INFO: Preparing files to input the three magnitudes (i.e. RAW, ODR, OLS) in a single GLM ...\e[39m"
 
 # First create stim times for each run (i.e. magnitude type: RAW, ODR, LSQ)
 # Note that ODR is considered as the 2nd run, and LSQ as the 3rd run. 
 # Thus, ODR stimulus times must start at time point 440 (440*0.85s = 374s) and finish at 880 (880*0.85s=748s). Likewise, LSQ must start at 880 (748s) 
 
+echo -e "\e[32m ++ INFO: Preparing onset times as if they were presented in three different runs ...\e[39m"
 cd ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times
 
 1deval -overwrite -a onset_${SUBJ}_task-${TASK}_${ORDER}_Pres.1D.txt -expr 'a' > onset_${SUBJ}_task-${TASK}_${ORDER}_Pres_Raw.1D.txt
@@ -110,6 +109,7 @@ cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
 # CONCATENATE CENSOR; DEMEAN MOTION; DERIV MOTION FILES
 
+echo -e "\e[32m ++ INFO: Concatenating censoring, demean and derivative motion files three times ...\e[39m"
 cat ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D > ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2_concatenated.1D
 cat ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D ${SUBJ}_Motion_demean.1D > ${SUBJ}_Motion_demean_concatenated.1D
 cat ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D > ${SUBJ}_Motion_deriv_concatenated.1D
@@ -119,6 +119,10 @@ cat ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D ${SUBJ}_Motion_deriv.1D > ${
 Concat_files
 
 GLM_MEMA() {
+
+echo -e "\e[34m +++ ===============================================================================================\e[39m"
+echo -e "\e[34m +++ --------------------> STARTING 3DDECONVOLVE FOR A MIXED-EFFECTS ANALYSIS <---------------------\e[39m"
+echo -e "\e[34m +++ ===============================================================================================\e[39m"
 
 TR_COUNTS=$(3dinfo -nt ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
 TR=$(3dinfo -TR ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz)
