@@ -57,13 +57,13 @@ estimate = np.zeros_like(filt)
 
 mag = np.array(mag)
 
-def multiplelinear(beta, x):
+def linear(beta, x):
     f = np.zeros(x.shape)
     f = beta[0]*x + beta[1]
     return f
     
 # Create model
-linearfit = odr.Model(multiplelinear)
+linearfit = odr.Model(linear)
 
 # Creates a noise mask that takes only those values greater than noise_lb
 freqs = np.linspace(-1.0, 1.0, nt) / (2 * TR)
