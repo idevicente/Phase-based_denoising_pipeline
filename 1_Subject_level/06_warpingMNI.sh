@@ -41,7 +41,7 @@ FWHM=5.0 # FULL-WIDTH-HALF-MAXIMUM FOR SPATIAL SMOOTHING
 
 cd ${PRJDIR}/PREPROC/${SUBJ}/func
 
-VOXELRESZ=$(3dinfo -adk ${SUBJ}.volreg_base.nii.gz) #MINE
+VOXELRESZ=$(3dinfo -adk ${SUBJ}.volreg_base.nii.gz)
 
 echo "Working in $(pwd)"
 
