@@ -171,7 +171,7 @@ echo -e "\e[34m +++ ============================================================
 echo -e "\e[34m +++ -->  WARPING and SPATIAL SMOOTHING OF GLM STATS TO ${TSPACE}  <--\e[39m"
 echo -e "\e[34m +++ =================================================================\e[39m"
 
-for GLM_TYPE in GLM_4MEMA_REML
+for GLM_TYPE in GLM_mag_REML GLM_lsqrs_REML GLM_odr_REML
 do
     echo -e "\e[32m ++ INFO: Warping ${GLM_TYPE} to ${TSPACE} ...\e[39m"
     3dNwarpApply -overwrite -master ${SUBJ}_T1_ns.${TSPACE}.nii.gz -dxyz ${VOXELRESZ} \
