@@ -100,8 +100,8 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 3dDeconvolve -overwrite -input ${SUBJ}.magnitude.pb03_volreg_detrended_masked_scaled_mean.nii.gz                        					\
 	-polort ${POLORTORDER} -num_stimts 17	                                              							\
 	-censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D               					\
-	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmBLOCK' -stim_label 1 Sentence 	\
-	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmBLOCK' -stim_label 2 Scramble 	\
+	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmUBLOCK' -stim_label 1 Sentence 	\
+	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmUBLOCK' -stim_label 2 Scramble 	\
 	-stim_times 3 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Pres.1D.txt 'SPMG1' -stim_label 3 Pres 			\
 	-stim_times 4 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Hash.1D.txt 'SPMG1' -stim_label 4 Hash 			\
 	-stim_times 5 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Star.1D.txt 'SPMG1' -stim_label 5 Star 			\
@@ -145,8 +145,8 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 3dDeconvolve -overwrite -input ${SUBJ}.Lsqrs.magnitude_phdenoised_scaled_mean.nii.gz                        						\
 	-polort ${POLORTORDER} -num_stimts 17	                                              							\
 	-censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D               					\
-	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmBLOCK' -stim_label 1 Sentence 	\
-	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmBLOCK' -stim_label 2 Scramble 	\
+	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmUBLOCK' -stim_label 1 Sentence 	\
+	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmUBLOCK' -stim_label 2 Scramble 	\
 	-stim_times 3 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Pres.1D.txt 'SPMG1' -stim_label 3 Pres 			\
 	-stim_times 4 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Hash.1D.txt 'SPMG1' -stim_label 4 Hash 			\
 	-stim_times 5 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Star.1D.txt 'SPMG1' -stim_label 5 Star 			\
@@ -191,8 +191,8 @@ POLORTORDER=$(echo "1+${POLORTORDER}" | bc)
 3dDeconvolve -overwrite -input ${SUBJ}.odr_substracted_scaled_mean.nii.gz                        								\
 	-polort ${POLORTORDER} -num_stimts 17	                                              							\
 	-censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D               					\
-	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmBLOCK' -stim_label 1 Sentence 	\
-	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmBLOCK' -stim_label 2 Scramble 	\
+	-stim_times_AM1 1 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Sentence.1D.txt 'dmUBLOCK' -stim_label 1 Sentence 	\
+	-stim_times_AM1 2 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Scramble.1D.txt 'dmUBLOCK' -stim_label 2 Scramble 	\
 	-stim_times 3 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Pres.1D.txt 'SPMG1' -stim_label 3 Pres 			\
 	-stim_times 4 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Hash.1D.txt 'SPMG1' -stim_label 4 Hash 			\
 	-stim_times 5 ${PRJDIR}/BIDS_selected_subjects/${SUBJ}/onset_times/onset_${SUBJ}_task-${TASK}_${ORDER}_Star.1D.txt 'SPMG1' -stim_label 5 Star 			\
