@@ -170,24 +170,7 @@ done
 echo -e "\e[34m +++ =================================================================\e[39m"
 echo -e "\e[34m +++ -->  WARPING and SPATIAL SMOOTHING OF GLM STATS TO ${TSPACE}  <--\e[39m"
 echo -e "\e[34m +++ =================================================================\e[39m"
-for GLM_TYPE in GLM_mag_REML GLM_odr_REML GLM_lsqrs_REML
-do
-    echo -e "\e[32m ++ INFO: Warping ${GLM_TYPE} to ${TSPACE} ...\e[39m"
-    3dNwarpApply -overwrite -master ${SUBJ}_T1_ns.${TSPACE}.nii.gz -dxyz ${VOXELRESZ} \
-             -source ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.nii.gz                         \
-             -nwarp "anat.un.aff.qw_WARP.nii.gz mat.warp.aff12.1D"     \
-             -prefix ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.${TSPACE}.nii.gz
 
-    echo -e "\e[32m ++ INFO: Spatial smoothing ${FWHM} of ${GLM_TYPE} in ${TSPACE} space ...\e[39m"
-    3dBlurInMask -overwrite -float -preserve -FWHM ${FWHM} -mask ${SUBJ}_mask_base.FUNC.${TSPACE}.nii.gz \
-             -prefix rm.${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.${TSPACE}.nii.gz
-    3dcalc -overwrite -a rm.${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz -m ${SUBJ}_mask_base.FUNC.${TSPACE}.nii.gz \
-             -expr 'a*m' -prefix ${SUBJ}.${GLM_TYPE}.stats_scaled_mean.blur.${TSPACE}.nii.gz
-
-
-done
-
-# Repeat for 3dMEMA GLM results 
 for GLM_TYPE in GLM_4MEMA_REML
 do
     echo -e "\e[32m ++ INFO: Warping ${GLM_TYPE} to ${TSPACE} ...\e[39m"
