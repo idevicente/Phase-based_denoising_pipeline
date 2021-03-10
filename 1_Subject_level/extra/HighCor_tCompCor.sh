@@ -126,8 +126,7 @@ mag_PC_regressors_HighCor() {
 	3dcalc -a HighCor_mask.nii.gz -b rm.det_pcin.nii.gz -expr 'a*b' -prefix rm.HighCor.det_pcin.nii.gz
 	
 	echo -e "\e[32m ++ INFO: Computing PCs for highly correlated magnitude-phase voxels ...\e[39m"
-	3dpc -overwrite -mask HighCor_mask.nii.gz -pcsave 10 \
-	    -prefix rm.HighCor rm.det_pcin.nii.gz
+	3dpc -overwrite -pcsave 10 -prefix rm.HighCor rm.HighCor.det_pcin.nii.gz
 	# zero pad censored TRs
 	1d_tool.py -overwrite -censor_fill_parent ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
 	    -infile rm.HighCor_vec.1D -write ROIPC.HighCor.1D
@@ -157,8 +156,7 @@ mag_PC_regressors_tCompCor() {
 	3dcalc -a tCompCor_mask.nii.gz -b rm.det_pcin.nii.gz -expr 'a*b' -prefix rm.tCompCor.det_pcin.nii.gz
 	
 	echo -e "\e[32m ++ INFO: Computing PCs for voxels with high temporal STD ...\e[39m"
-	3dpc -overwrite -mask tCompCor_mask.nii.gz -pcsave 10 \
-	    -prefix rm.tCompCor rm.det_pcin.nii.gz
+	3dpc -overwrite -pcsave 10 -prefix rm.tCompCor rm.tCompCor.det_pcin.nii.gz
 	# zero pad censored TRs
 	1d_tool.py -overwrite -censor_fill_parent ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
 	    -infile rm.tCompCor_vec.1D -write ROIPC.tCompCor.1D
