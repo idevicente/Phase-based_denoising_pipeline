@@ -121,6 +121,10 @@ mag_PC_regressors_HighCor() {
 	3dTproject -overwrite -polort ${POLORTORDER} -ort ${SUBJ}_Motion_demean.1D -ort ${SUBJ}_Motion_deriv.1D \
 	    -censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
 	    -cenmode KILL -input ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz -prefix rm.det_pcin.nii.gz
+	
+	echo -e "\e[32m ++ INFO: Applying HighCor mask ...\e[39m"
+	3dcalc -a HighCor_mask.nii.gz -b rm.det_pcin.nii.gz -expr 'a*b' -prefix rm.HighCor.det_pcin.nii.gz
+	
 	echo -e "\e[32m ++ INFO: Computing PCs for highly correlated magnitude-phase voxels ...\e[39m"
 	3dpc -overwrite -mask HighCor_mask.nii.gz -pcsave 10 \
 	    -prefix rm.HighCor rm.det_pcin.nii.gz
@@ -148,11 +152,10 @@ mag_PC_regressors_tCompCor() {
 	echo "\e[32m ++ INFO:  Masking ${Thresh_voxels} voxels with the highest temporal standard deviation in magnitude data ...\e[39m"		
 	3dROIMaker -only_some_top ${Thresh_voxels} -volthr 1 -nifti -prefix tCompCor_mask -inset ${SUBJ}_tSTD.tCompCor_mask.nii.gz -overwrite
 	3dcalc -a tCompCor_mask_GM.nii.gz -expr 'bool(a)' -prefix tCompCor_mask.nii.gz -overwrite	# Converts ROI to a binary mask
-
-	echo -e "\e[32m ++ INFO: Projecting out other nuisance regressors (motion, trends) and censoring before computing PCs ...\e[39m"
-	3dTproject -overwrite -polort ${POLORTORDER} -ort ${SUBJ}_Motion_demean.1D -ort ${SUBJ}_Motion_deriv.1D \
-	    -censor ${SUBJ}_Motion_${CENSOR_TYPE_2USE}_censor_${CENSOR_MOTION_TH_2USE}_combined_2.1D \
-	    -cenmode KILL -input ${SUBJ}.magnitude.pb03_volreg_detrended_masked.nii.gz -prefix rm.det_pcin.nii.gz
+    
+	echo -e "\e[32m ++ INFO: Applying tCompCor mask ...\e[39m"
+	3dcalc -a tCompCor_mask.nii.gz -b rm.det_pcin.nii.gz -expr 'a*b' -prefix rm.tCompCor.det_pcin.nii.gz
+	
 	echo -e "\e[32m ++ INFO: Computing PCs for voxels with high temporal STD ...\e[39m"
 	3dpc -overwrite -mask tCompCor_mask.nii.gz -pcsave 10 \
 	    -prefix rm.tCompCor rm.det_pcin.nii.gz
